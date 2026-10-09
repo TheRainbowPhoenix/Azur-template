@@ -38,8 +38,7 @@ find_package(Azur 0.1 REQUIRED)
 
 add_executable(AzurTemplate ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
 target_compile_options(AzurTemplate PRIVATE -Wall -Wextra -Os -g -flto=auto)
-target_compile_options(AzurTemplate PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-freflection>)
-target_link_options(AzurTemplate PRIVATE -Wl,-Map=map_${FXSDK_PLATFORM} -Wl,--print-memory-usage -freflection)
+target_link_options(AzurTemplate PRIVATE -Wl,-Map=map_${FXSDK_PLATFORM} -Wl,--print-memory-usage)
 target_link_libraries(AzurTemplate -lstdc++ azur num Gint::Gint)
 
 if("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
