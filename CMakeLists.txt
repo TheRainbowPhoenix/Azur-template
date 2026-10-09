@@ -4,54 +4,49 @@
 cmake_minimum_required(VERSION 3.15)
 project(AzurTemplate VERSION 0.1 LANGUAGES CXX C ASM)
 
+include(GenerateG1A)
+include(GenerateG3A)
 include(GenerateHH3)
 include(Fxconv)
-
 find_package(Gint 2.9 REQUIRED)
-
-set(CMAKE_C_STANDARD 23)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Azur is used as a source submodule. Run:
-#   git submodule update --init --recursive
-# before building outside Codespaces.
-#
-# This template only builds for calculators, so it bypasses Azur's desktop/web
-# third-party setup and builds only the gint renderer plus libnum.
-if(NOT "${FXSDK_PLATFORM_LONG}" STREQUAL fxCP)
-  message(FATAL_ERROR "This template is configured for ClassPad. Use fxsdk build-cp.")
-endif()
-
-set(AZUR_PLATFORM gint)
-set(AZUR_PLATFORM_GENERIC TRUE)
-set(AZUR_TOOLKIT_GINT TRUE)
-set(AZUR_GRAPHICS_GINT_CG TRUE)
-set(AZUR_ARCH_SH4ALDSP TRUE)
-set(AZUR_TERMINAL_NONE TRUE)
-set(AZUR_DEBUG FALSE)
-
-set(LIBDIR "${FXSDK_LIB}/azur")
-set(INCDIR "${FXSDK_INCLUDE}/azur")
-set(DATADIR "${FXSDK_SYSROOT}/share/azur")
-
-link_libraries(Gint::Gint)
-
-add_subdirectory(azur/libnum)
-add_subdirectory(azur/azur)
 
 set(SOURCES
   src/main.cxx
 )
 
-set(ASSETS)
-set(ASSETS_cp)
+set(ASSETS
+)
 
-fxconv_declare_assets(${ASSETS} ${ASSETS_cp} WITH_METADATA)
+set(ASSETS_fx
+)
 
-add_executable(azur_template ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
-target_compile_options(azur_template PRIVATE -Wall -Wextra -Os -g)
-target_link_libraries(azur_template -lstdc++ azur num Gint::Gint)
+set(ASSETS_cg
+)
 
-generate_hh3(TARGET azur_template OUTPUT "AzurTemplate.hh3")
+fxconv_declare_assets(${ASSETS} ${ASSETS_fx} ${ASSETS_cg} WITH_METADATA)
+
+list(APPEND CMAKE_MODULE_PATH "$ENV{AZUR_PATH_${AZUR_PLATFORM}}/lib/cmake")
+find_package(Azur 0.1 REQUIRED)
+
+add_executable(AzurTemplate ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
+target_compile_options(AzurTemplate PRIVATE -Wall -Wextra -Os -g -flto=auto)
+target_link_libraries(AzurTemplate Gint::Gint)
+
+if(AZUR_PLATFORM STREQUAL gint)
+  target_link_libraries(AzurTemplate Azur::Azur)
+else()
+  target_link_libraries(AzurTemplate Azur::Azur Azur::GLM Azur::ImGui)
+endif()
+
+if("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G)
+  generate_g1a(TARGET AzurTemplate OUTPUT "AzurTemplate.g1a"
+    NAME "AzurTemplate" ICON assets-fx/icon.png)
+elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCG50)
+  generate_g3a(TARGET AzurTemplate OUTPUT "AzurTemplate.g3a"
+    NAME "AzurTemplate" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
+elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fx9860G_G3A)
+  generate_g3a(TARGET AzurTemplate OUTPUT "AzurTemplate-fx.g3a"
+    NAME "AzurTemplate-fx" ICONS assets-cg/icon-uns.png assets-cg/icon-sel.png)
+elseif("${FXSDK_PLATFORM_LONG}" STREQUAL fxCP)
+  generate_hh3(TARGET AzurTemplate OUTPUT "AzurTemplate.hh3")
+endif()
