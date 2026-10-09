@@ -12,4 +12,10 @@ if [ ! -f azur/azur/CMakeLists.txt ] || [ ! -f azur/libnum/CMakeLists.txt ]; the
   exit 1
 fi
 
+cd azur
+fxsdk build-cp -c -B build-cp-3rdparty -S 3rdparty
+make -C build-cp-3rdparty install
+fxsdk build-cp install
+
 echo "Azur submodule is ready."
+
