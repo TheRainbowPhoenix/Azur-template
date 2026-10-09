@@ -36,6 +36,8 @@ set(LIBDIR "${FXSDK_LIB}/azur")
 set(INCDIR "${FXSDK_INCLUDE}/azur")
 set(DATADIR "${FXSDK_SYSROOT}/share/azur")
 
+link_libraries(Gint::Gint)
+
 add_subdirectory(azur/libnum)
 add_subdirectory(azur/azur)
 
