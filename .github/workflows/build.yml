@@ -12,17 +12,12 @@ jobs:
       image: ghcr.io/therainbowphoenix/gint-docker:main
 
     steps:
-      - name: Install Git
-        run: |
-          apt-get update
-          apt-get install -y git ca-certificates
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Prepare Azur
+      - name: Check Azur submodule
         run: bash scripts/setup-azur.sh
 
       - name: Build

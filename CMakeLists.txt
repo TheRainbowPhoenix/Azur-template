@@ -17,7 +17,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Azur is used as a source submodule. Run:
 #   git submodule update --init --recursive
 # before building outside Codespaces.
-add_subdirectory(azur)
+#
+# This template only builds for calculators, so it bypasses Azur's desktop/web
+# third-party setup and builds only the gint renderer plus libnum.
+if(NOT "${FXSDK_PLATFORM_LONG}" STREQUAL fxCP)
+  message(FATAL_ERROR "This template is configured for ClassPad. Use fxsdk build-cp.")
+endif()
+
+set(AZUR_PLATFORM gint)
+set(AZUR_PLATFORM_GENERIC TRUE)
+set(AZUR_TOOLKIT_GINT TRUE)
+set(AZUR_GRAPHICS_GINT_CG TRUE)
+set(AZUR_ARCH_SH4ALDSP TRUE)
+set(AZUR_TERMINAL_NONE TRUE)
+set(AZUR_DEBUG FALSE)
+
+set(LIBDIR "${FXSDK_LIB}/azur")
+set(INCDIR "${FXSDK_INCLUDE}/azur")
+set(DATADIR "${FXSDK_SYSROOT}/share/azur")
+
+add_subdirectory(azur/libnum)
+add_subdirectory(azur/azur)
 
 set(SOURCES
   src/main.cxx
@@ -32,7 +52,4 @@ add_executable(azur_template ${SOURCES} ${ASSETS} ${ASSETS_${FXSDK_PLATFORM}})
 target_compile_options(azur_template PRIVATE -Wall -Wextra -Os -g)
 target_link_libraries(azur_template -lstdc++ azur num Gint::Gint)
 
-if("${FXSDK_PLATFORM_LONG}" STREQUAL fxCP)
-  generate_hh3(TARGET azur_template OUTPUT "AzurTemplate.hh3")
-endif()
-
+generate_hh3(TARGET azur_template OUTPUT "AzurTemplate.hh3")
