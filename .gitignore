@@ -1,0 +1,11 @@
+build*/
+*.hh3
+*.g1a
+*.g3a
+*.elf
+*.bin
+*.map
+compile_commands.json
+.cache/
+.vscode/
+

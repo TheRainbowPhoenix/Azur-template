@@ -1,0 +1,4 @@
+[submodule "azur"]
+	path = azur
+	url = https://github.com/TheRainbowPhoenix/Azur.git
+
