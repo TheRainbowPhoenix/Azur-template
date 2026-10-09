@@ -13,7 +13,8 @@ if [ ! -f azur/azur/CMakeLists.txt ] || [ ! -f azur/libnum/CMakeLists.txt ]; the
 fi
 
 cd azur
+fxsdk build-cp -c -B build-cp-3rdparty -S 3rdparty
+make -C build-cp-3rdparty install -j"$(nproc)"
 fxsdk build-cp install
-
 
 echo "Azur submodule is ready."
