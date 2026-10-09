@@ -2,7 +2,7 @@
 
 This is a small `gint` and Azur template for Hollyhock-3 on the ClassPad II.
 
-It is set up for GitHub Codespaces. When the Codespace starts, it initializes the Azur submodule.
+It is set up for GitHub Codespaces. When the Codespace starts, it initializes the Azur submodule and installs Azur for the ClassPad build.
 
 The template builds only for ClassPad. It uses Azur's `gint` renderer directly from the submodule, so it does not build Azur's desktop/web third-party dependencies.
 
@@ -38,7 +38,7 @@ fxsdk build-cp
 
 - `src/main.cxx` is the demo app.
 - `azur` is the Azur submodule.
-- `scripts/setup-azur.sh` checks that the Azur submodule is ready.
+- `scripts/setup-azur.sh` checks the Azur submodule and runs `fxsdk build-cp install` for Azur.
 - `.devcontainer` makes the project work in GitHub Codespaces.
 
 ## What the demo does
